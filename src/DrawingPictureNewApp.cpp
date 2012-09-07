@@ -117,7 +117,6 @@ void DrawingPictureNewApp::drawCircles(uint8_t* pixels, double x, double y, int 
 
 void DrawingPictureNewApp::gradient(uint8_t* pixels){
 	int index, red=255, green=0, blue=255;
-	double yPercent;                     // You dont use this variable
 	int redB, greenB, blueB;
 	for(int y=1;y<kAppHeight;y++){
 		for(int x=0;x<kAppWidth;x++){
@@ -199,18 +198,13 @@ void DrawingPictureNewApp::setup()
 	yBall=100;
 	mySurface_ = new Surface(kTextureSize,kTextureSize,false);
 	pixels = (*mySurface_).getData();
-
-	// You can remove all of these function calls and still get the same
-	// results.
-	//gradient(pixels);
-	//drawRectangles(pixels,100,400,650,50,0,0,0);
-	//drawRectangles(pixels,150,450,50,250,0,0,0);
-	//copyRegion(pixels,150,450,500,450,50,250);
-	//drawCircles(pixels,xBall,yBall,100,155,0,255);
 }
 
 void DrawingPictureNewApp::mouseDown( MouseEvent event )
 {
+	if(event.LEFT_DOWN){
+		blurScreen(pixels);
+	}
 }
 
 /*
@@ -225,20 +219,15 @@ void DrawingPictureNewApp::update()
 	yBall=yBall+10;
 	if(xBall>kAppWidth){
 		xBall=0;
-		//blurScreen(pixels);
 	}
 	if(yBall>305&&xBall<775)
 		yBall=200;
 
 	gradient(pixels);
-	//blurScreen(pixels);
 	drawRectangles(pixels,100,400,650,50,0,0,0);
 	drawRectangles(pixels,150,450,50,250,0,0,0);
 	copyRegion(pixels,150,450,500,450,50,250);
 	drawCircles(pixels,xBall,yBall,100,155,0,255);
-	// It looked like your earlier blurScreen might have been getting called, but was quickly painted
-	// over by the gradient
-	
 }
 
 /*
