@@ -34,21 +34,55 @@ class DrawingPictureNewApp : public AppBasic {
 	  static const int kAppWidth=900;	
 	  static const int kAppHeight=700;	
 	  static const int kTextureSize=1024;
-	  void DrawingPictureNewApp::drawRectangles(uint8_t* pixels, int x, int y, int width, int height, int red, int green, int blue);
-	  void DrawingPictureNewApp::drawCircles(uint8_t* pixels, double x, double y, int radius, int red, int green, int blue);
-	  void DrawingPictureNewApp::copyRegion(uint8_t* pixels, int x1, int y1, int x2, int y2, int width, int height);
-	  void DrawingPictureNewApp::gradient(uint8_t* pixels);
-	  void DrawingPictureNewApp::blurScreen(uint8_t* pixels);
+
+	  /**
+	  *Draws a rectangle at a speceified x and y value, with specified width
+	  *and height by accessing and changing the pixel array directly.
+	  *
+	  *This satisfies A.1 goal(rectangle).
+	  */
+	  void drawRectangles(uint8_t* pixels, int x, int y, int width, int height, int red, int green, int blue);
+
+	  /**
+	  *Draws a circle at a speceified x and y value, with specified radius
+	  *by accessing and changing the pixel array directly.
+	  *
+	  *This satisfies A.2 goal(circle).
+	  */
+	  void drawCircles(uint8_t* pixels, double x, double y, int radius, int red, int green, int blue);
+
+	  /**
+	  *Creates a gradient from top to bottom of the program by accessing 
+	  *and changing the pixel array directly.
+	  *
+	  *This satisfies A.4 goal(gradient).
+	  */
+	  void gradient(uint8_t* pixels);
+
+	  /**
+	  *Copies any rectangular part of the pixel array into a different part of
+	  *the array given specified starting x and y values copy locations for 
+	  *x and y and specified width and height; accesses and changes the pixel
+	  *array directly.
+	  *
+	  *This satisfies A.1 goal(rectangle).
+	  */
+	  void copyRegion(uint8_t* pixels, int x1, int y1, int x2, int y2, int width, int height);
+
+	  /**
+	  *Creates a blur in the picture by accessing and changing the pixel
+	  *array directly.
+	  *
+	  *This satisfies B.1 goal(blur), I do not believe tis is working
+	  *
+	  *This code was copied and adjusted from Sonodabe's github account
+	  */  
+	  void blurScreen(uint8_t* pixels);
 	  int xBall;
 	  int yBall;
 };
 
-/**
-*Draws a rectangle at a speceified x and y value, with specified width
-*and height by accessing and changing the pixel array directly.
-*
-*This satisfies A.1 goal(rectangle).
-*/
+
 void DrawingPictureNewApp::drawRectangles(uint8_t* pixels, int x, int y, int width, int height, int red, int green, int blue){
 	height = y+height;
 	width = x+width;
@@ -61,14 +95,9 @@ void DrawingPictureNewApp::drawRectangles(uint8_t* pixels, int x, int y, int wid
 			pixels[index+2]=blue;
 		}
 	}
-};
+}
 
-/**
-*Draws a circle at a speceified x and y value, with specified radius
-*by accessing and changing the pixel array directly.
-*
-*This satisfies A.2 goal(circle).
-*/
+
 void DrawingPictureNewApp::drawCircles(uint8_t* pixels, double x, double y, int radius, int red, int green, int blue)
 {
 	for(int y1=0;y1<kAppHeight;y1++){
@@ -83,17 +112,12 @@ void DrawingPictureNewApp::drawCircles(uint8_t* pixels, double x, double y, int 
 			}
 		}
 	}
-};
+}
 
-/**
-*Creates a gradient from top to bottom of the program by accessing 
-*and changing the pixel array directly.
-*
-*This satisfies A.4 goal(gradient).
-*/
+
 void DrawingPictureNewApp::gradient(uint8_t* pixels){
 	int index, red=255, green=0, blue=255;
-	double yPercent;
+	double yPercent;                     // You dont use this variable
 	int redB, greenB, blueB;
 	for(int y=1;y<kAppHeight;y++){
 		for(int x=0;x<kAppWidth;x++){
@@ -106,16 +130,9 @@ void DrawingPictureNewApp::gradient(uint8_t* pixels){
 			pixels[index+2]=0+blueB;
 		}
 	}
-};
+}
 
-/**
-*Copies any rectangular part of the pixel array into a different part of
-*the array given specified starting x and y values copy locations for 
-*x and y and specified width and height; accesses and changes the pixel
-*array directly.
-*
-*This satisfies A.1 goal(rectangle).
-*/
+
 void DrawingPictureNewApp::copyRegion(uint8_t* pixels, int x1, int y1, int x2, int y2, int width, int height){
 	height = y1+height;
 	width = x1+width; 
@@ -130,18 +147,15 @@ void DrawingPictureNewApp::copyRegion(uint8_t* pixels, int x1, int y1, int x2, i
 			pixels[storData+2]=pixels[index+2];
 		}
 	}
-};
+}
 
-/**
-*Creates a blur in the picture by accessing and changing the pixel
-*array directly.
-*
-*This satisfies B.1 goal(blur), I do not believe tis is working
-*
-*This code was copied and adjusted from Sonodabe's github account
-*/
+
 void DrawingPictureNewApp::blurScreen(uint8_t* pixels){
-    int sumR, sumG, sumB;
+   int8_t kernel[9] = {1, 2, 1,
+					   2, 1, 2, 
+					   1, 2, 1};
+	
+	int sumR, sumG, sumB, k;
 	int index;
     for(int y = 1; y < kAppHeight-1; y++){
        for(int x = 1; x < kAppWidth-1; x++){
@@ -150,26 +164,26 @@ void DrawingPictureNewApp::blurScreen(uint8_t* pixels){
            sumB = 0;
 			 for(int avgY = -1; avgY<=1; avgY++){
 				  for(int avgX = -1; avgX<=1; avgX++){
-				    index = 3*(x+y*kAppWidth)*(x+avgX, y+avgY);
-				    sumR = sumR+pixels[index];
-				    sumG = sumG+pixels[index+1];
-					sumB = sumB+pixels[index+2];
+					  // This index would put you out of bounds
+					  //index = 3*(x+y*kAppWidth)*(x+avgX, y+avgY);
+					  index = 3*(x + avgX + (y+avgY)*kTextureSize);
+					  // This lets you cycle through the kernel matrix from top left to bottom right
+					  k = kernel[avgX + 1 + (avgY+1) * 3];
+				    sumR += pixels[index] >> k;
+				    sumG += pixels[index+1] >> k;
+					sumB += pixels[index+2] >> k;
 				}
 			}
-			for(y;y<kAppHeight;y++){
-				for(x;x<kAppWidth;x++){
 					index=(x+y*kTextureSize)*3;
-					pixels[index]=sumR/9.0;
-					pixels[index+1]=sumG/9.0;
-					pixels[index+2]=sumB/9.0;
+					pixels[index]=sumR;
+					pixels[index+1]=sumG;
+					pixels[index+2]=sumB;
 			}
 		}
       }
-   }
-};
-
+   
 /*
-*Thhis sets the window size and makes resizable false
+*This sets the window size and ensures the user can't resize the window
 */
 void DrawingPictureNewApp::prepareSettings(Settings* settings){
 	(*settings).setWindowSize(kAppWidth,kAppHeight);
@@ -177,7 +191,7 @@ void DrawingPictureNewApp::prepareSettings(Settings* settings){
 }
 
 /*
-*This setups the origional surface before any animation
+*This sets up the origional surface before any animation
 */
 void DrawingPictureNewApp::setup()
 {
@@ -185,11 +199,14 @@ void DrawingPictureNewApp::setup()
 	yBall=100;
 	mySurface_ = new Surface(kTextureSize,kTextureSize,false);
 	pixels = (*mySurface_).getData();
-	gradient(pixels);
-	drawRectangles(pixels,100,400,650,50,0,0,0);
-	drawRectangles(pixels,150,450,50,250,0,0,0);
-	copyRegion(pixels,150,450,500,450,50,250);
-	drawCircles(pixels,xBall,yBall,100,155,0,255);
+
+	// You can remove all of these function calls and still get the same
+	// results.
+	//gradient(pixels);
+	//drawRectangles(pixels,100,400,650,50,0,0,0);
+	//drawRectangles(pixels,150,450,50,250,0,0,0);
+	//copyRegion(pixels,150,450,500,450,50,250);
+	//drawCircles(pixels,xBall,yBall,100,155,0,255);
 }
 
 void DrawingPictureNewApp::mouseDown( MouseEvent event )
@@ -208,15 +225,20 @@ void DrawingPictureNewApp::update()
 	yBall=yBall+10;
 	if(xBall>kAppWidth){
 		xBall=0;
-		blurScreen(pixels);
+		//blurScreen(pixels);
 	}
 	if(yBall>305&&xBall<775)
 		yBall=200;
+
 	gradient(pixels);
+	blurScreen(pixels);
 	drawRectangles(pixels,100,400,650,50,0,0,0);
 	drawRectangles(pixels,150,450,50,250,0,0,0);
 	copyRegion(pixels,150,450,500,450,50,250);
 	drawCircles(pixels,xBall,yBall,100,155,0,255);
+	// It looked like your earlier blurScreen might have been getting called, but was quickly painted
+	// over by the gradient
+	
 }
 
 /*
