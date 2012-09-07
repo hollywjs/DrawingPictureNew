@@ -231,7 +231,7 @@ void DrawingPictureNewApp::update()
 		yBall=200;
 
 	gradient(pixels);
-	blurScreen(pixels);
+	//blurScreen(pixels);
 	drawRectangles(pixels,100,400,650,50,0,0,0);
 	drawRectangles(pixels,150,450,50,250,0,0,0);
 	copyRegion(pixels,150,450,500,450,50,250);
